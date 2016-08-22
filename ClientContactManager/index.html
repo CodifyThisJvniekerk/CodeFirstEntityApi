@@ -12,12 +12,12 @@
             $('#Customers').children().remove();
             $('#Customers').show();
             $('#customerform').hide();
-            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td></tr>').appendTo($('#Customers'));
+            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td><td>commands</td></tr>').appendTo($('#Customers'));
             $(function () {
                 $.getJSON(url, function (data) {
                     console.log(data);
                     for (item in data) {
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '</td><td>' + data[item].Longitude + '</td></tr>').appendTo($('#Customers'));
+                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>' + "</td><td> <input type='button' onclick='loadCustomer(" + data[item].Latitude + ")' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'))
                     }
                 });
             });
@@ -26,12 +26,12 @@
             url = '/SearchForCustomerByName/'
             $('#Customers').show();
             $('#Customers').children().remove();
-            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td></tr>').appendTo($('#Customers'));
+            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td><td>commands</td></tr>').appendTo($('#Customers'));
             $(function () {
                 $.getJSON(url + '/'+ $('#txtCustSearck').val(), function (data) {
                     console.log(data);
                     for (item in data) {
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '</td><td>' + data[item].Longitude + '</td></tr>').appendTo($('#Customers'));
+                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'+ "</td><td> <input type='button' onclick='loadCustomer(" + data[item].ID + ")' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'));
                     }
                 });
             });
@@ -42,36 +42,77 @@
             } else {
                 $('#customerform').show();
                 $('#Customers').hide();
+                $('#txtID').val() = "";
             }
         }
-        function addCustomer() {
-            console.log($('#txtCustLatitude').val());
-            if ($('#txtCustName').val().trim() !== "") {
-                if ($.isNumeric($('#txtCustLatitude').val()) && $.isNumeric($('#txtCustLongitude').val())) {
-                    $.ajax({
-                        type: "PUT",
-                        url: "AddCustomer/" + $('#txtCustName').val() + '/' + $('#txtCustLatitude').val() + '/' + $('#txtCustLongitude').val(),
-                        //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        },
-                        success: function (result) {
-                            alert('customer saved.');
-                            getCustomers();
-                        }
-                        });
+        function addEditCustomer() {
+            if ($('#txtID').val() == "")
+            {
+                if ($('#txtCustName').val().trim() !== "") {
+                    if ($.isNumeric($('#txtCustLatitude').val()) && $.isNumeric($('#txtCustLongitude').val())) {
+                        $.ajax({
+                            type: "PUT",
+                            url: "AddCustomer/" + $('#txtCustName').val() + '/' + $('#txtCustLatitude').val() + '/' + $('#txtCustLongitude').val(),
+                            //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            },
+                            success: function (result) {
+                                alert('customer saved.');
+                            }
+                            });
+                    } else {
+                        alert('Please ensure both the longitude and latitude is numerical.');
+                    }
                 } else {
-                    alert('Please ensure both the longitude and latitude is numerical.');
+                    alert('Please enter an customer name.');
                 }
             } else {
-                alert('Please enter an customer name.');
+                if ($('#txtCustName').val().trim() !== "") {
+                    if ($.isNumeric($('#txtCustLatitude').val()) && $.isNumeric($('#txtCustLongitude').val())) {
+                        $.ajax({
+                            type: "PUT",
+                            url: "UpdateCustomer/" + $('#txtID').val() + '/' + $('#txtCustName').val() + '/' + $('#txtCustLatitude').val() + '/' + $('#txtCustLongitude').val(),
+                            //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            },
+                            success: function (result) {
+                                alert('customer saved.');
+                            }
+                        });
+                    } else {
+                        alert('Please ensure both the longitude and latitude is numerical.');
+                    }
+                } else {
+                    alert('Please enter an customer name.');
+                }
             }
+            $('#Customers').hide();
+            $('#customerform').hide();
+            
+        }
+        function loadCustomer(id) {
+            url = '/GetCustomerByID/' + id
+            $(function () {
+                $.getJSON(url, function (data) {
+                    console.log(data);
+                    console.log(data.ID + ' ' + data.Name + ' ' + data.Latitude + ' ' + data.Longitude);
+                    $('#customerform').show();
+                    $('#Customers').hide();
+                    $('#txtCustName').val(data.Name);
+                    $('#txtCustLatitude').val(data.Latitude);
+                    $('#txtCustLongitude').val(data.Longitude);
+                    $('#txtID').val(id);
+                });
+            });
         }
     </script>
 </head>
 <body onload="getCustomers();">
-    <input type="text" class="text-primary" id="txtCustSearck"/><input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerByName();"/><input type="button" value="Add Customer" class="btn-info" onclick="showCustomerForm(0);"/>
+    <input type="text" class="text-primary" id="txtCustSearck"/><input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerByName();"/><input type="button" value="Add Customer" class="btn-info" onclick="showCustomerForm(0);"/><input type="button" value="Show All" class="btn-info" onclick="getCustomers();" />
     <table id="Customers" style="width:100%" class="table-striped">
         <tr>
             <td>
@@ -82,7 +123,7 @@
     <table id="customerform" style="display:none; width:50%" class="">
         <tr>
             <td>Name:</td>
-            <td><input type="text" id="txtCustName"/></td>
+            <td><input type="text" id="txtCustName"/><input type="text" id="txtID" style="visibility:hidden;"></td>
         </tr>
         <tr>
             <td>Latitude</td>
@@ -93,7 +134,7 @@
             <td><input type="text" id="txtCustLongitude" /></td>
         </tr>
         <tr>
-            <td><input type="button" class="btn-info" value="Save" onclick="addCustomer();"/></td>
+            <td><input type="button" class="btn-info" value="Save" onclick="addEditCustomer();"/></td>
             <td></td>
         </tr>
     </table>

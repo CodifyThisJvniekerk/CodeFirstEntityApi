@@ -35,6 +35,7 @@ namespace ClientContactManager.Controllers
         // GET: api/Customers/GetCustomerByID?ID=value
         [ResponseType(typeof(Customer))]
         [ActionName("GetCustomerByID")]
+        [Route("GetCustomerByID/{id}")]
         public IHttpActionResult GetCustomerByID(long id)
         {
             Customer customer = db.Customers.Find(id);
@@ -47,13 +48,13 @@ namespace ClientContactManager.Controllers
         }
 
         // PUT: api/Customers/5
-        [HttpPut]
-        [ResponseType(typeof(void))]
-        public IHttpActionResult UpdateCustomer(long id, string name, decimal latitude, decimal Longitude)
+        [System.Web.Http.HttpPut]
+        [Route("UpdateCustomer/{id}/{name}/{latitude}/{Longitude}")]
+        public string UpdateCustomer(long id, string name, decimal latitude, decimal Longitude)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return "failed";
             }
             Customer customer = new Customer();
             customer.Name = name;
@@ -71,7 +72,7 @@ namespace ClientContactManager.Controllers
             {
                 if (!CustomerExistsByID(id))
                 {
-                    return NotFound();
+                    return "failed";
                 }
                 else
                 {
@@ -79,7 +80,7 @@ namespace ClientContactManager.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return "success";
         }
 
         // POST: api/Customers
