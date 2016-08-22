@@ -3,6 +3,7 @@
 <head>
     <title></title>
 	<meta charset="utf-8" />
+    
     <script src="scripts/jquery-3.1.0.min.js"></script>
     <link href="App_Themes/Bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="App_Themes/Bootstrap/bootstrap.css" rel="stylesheet" />
@@ -17,7 +18,7 @@
                 $.getJSON(url, function (data) {
                     console.log(data);
                     for (item in data) {
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>' + "</td><td> <input type='button' onclick='loadCustomer(" + data[item].Latitude + ")' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'))
+                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>' + "</td><td> <input type='button' onclick='loadCustomer(" + data[item].ID + ");' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'))
                     }
                 });
             });
@@ -31,7 +32,7 @@
                 $.getJSON(url + '/'+ $('#txtCustSearck').val(), function (data) {
                     console.log(data);
                     for (item in data) {
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'+ "</td><td> <input type='button' onclick='loadCustomer(" + data[item].ID + ")' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'));
+                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'+ "</td><td> <input type='button' onclick='loadCustomer(" + data[item].ID + ");' value='edit'/>" + + '</td></tr>').appendTo($('#Customers'));
                     }
                 });
             });
