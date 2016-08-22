@@ -24,6 +24,10 @@ namespace ClientContactManager.Models
             modelBuilder.Entity<Customer>()
                 .Property(e => e.Longitude)
                 .HasPrecision(18, 0);
+
+            modelBuilder.Entity<CustomerContact>()
+                   .HasRequired<Customer>(s => s.Customers)
+                   .WithMany(s => s.CustomerContacts); 
         }
     }
 }

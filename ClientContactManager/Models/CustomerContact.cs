@@ -7,8 +7,13 @@ namespace ClientContactManager.Models
     using System.Data.Entity.Spatial;
 
     [Table("CustomerContact")]
-    public partial class CustomerContact
+    public class CustomerContact
     {
+        List<Customer> CustomerList;
+        public CustomerContact()
+        {
+            CustomerList = new List<Customer>();
+        }
         public long ID { get; set; }
 
         [Required]
@@ -23,5 +28,7 @@ namespace ClientContactManager.Models
         public string ContactNumber { get; set; }
 
         public long CustomerID { get; set; }
+        public virtual Customer Customers { get; set; }
+        
     }
 }

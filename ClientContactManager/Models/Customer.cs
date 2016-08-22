@@ -7,8 +7,13 @@ namespace ClientContactManager.Models
     using System.Data.Entity.Spatial;
 
     [Table("Customer")]
-    public partial class Customer
+    public class Customer
     {
+        List<CustomerContact> CustomerList;
+        public Customer()
+        {
+            CustomerList = new List<CustomerContact>();
+        }
         public long ID { get; set; }
 
         [Required]
@@ -18,5 +23,8 @@ namespace ClientContactManager.Models
         public decimal? Latitude { get; set; }
 
         public decimal? Longitude { get; set; }
+        //public virtual CustomerContact CustomerContact { get; set; }
+
+         public virtual ICollection<ClientContactManager.Models.CustomerContact> CustomerContacts { get; set; }
     }
 }
