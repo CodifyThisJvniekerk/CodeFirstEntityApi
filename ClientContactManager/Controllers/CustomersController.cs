@@ -83,13 +83,13 @@ namespace ClientContactManager.Controllers
         }
 
         // POST: api/Customers
-        [HttpPost]
-        [ResponseType(typeof(Customer))]
-        public IHttpActionResult AddCustomer(string name, decimal latitude, decimal Longitude)
+        [System.Web.Http.HttpPut]
+        [Route("AddCustomer/{name}/{latitude}/{Longitude}")]
+        public string AddCustomer(string name, decimal latitude, decimal Longitude)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                //return BadRequest(ModelState);
             }
             Customer customer = new Customer();
             customer.Name = name;
@@ -97,8 +97,8 @@ namespace ClientContactManager.Controllers
             customer.Longitude = Longitude;
             db.Customers.Add(customer);
             db.SaveChanges();
+            return "success";
 
-            return CreatedAtRoute("DefaultApi", new { id = customer.ID }, customer);
         }
 
         // DELETE: api/Customers/5
