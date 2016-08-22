@@ -19,6 +19,15 @@ namespace ClientContactManager
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            config.Routes.MapHttpRoute(
+                name: "getcustomersbyName",
+                routeTemplate: "api/{controller}/{action}/{Name}",
+                defaults: new { id = RouteParameter.Optional } 
+                );
+            config.Routes.MapHttpRoute(
+                name: "GetAll",
+                routeTemplate: "api/{controller}/{action}"
+            );
         }
     }
 }
