@@ -10,6 +10,7 @@ namespace ClientContactManager.Models
         public CustomerApp()
             : base("name=CustomerApp")
         {
+            
         }
 
         public virtual DbSet<Customer> Customers { get; set; }
@@ -27,7 +28,8 @@ namespace ClientContactManager.Models
 
             modelBuilder.Entity<CustomerContact>()
                    .HasRequired<Customer>(s => s.Customers)
-                   .WithMany(s => s.CustomerContacts); 
+                   .WithMany(s => s.CustomerContacts);
+            
         }
     }
 }

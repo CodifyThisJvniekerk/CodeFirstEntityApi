@@ -17,13 +17,18 @@ namespace ClientContactManager.Controllers
         private CustomerApp db = new CustomerApp();
 
         // GET: api/CustomerContacts
-        public IQueryable<CustomerContact> GetCustomerContacts()
+        [ResponseType(typeof(IQueryable<Customer>))]
+        [ActionName("GetCustomerContacts")]
+        [Route("api/CustomerContacts/GetCustomerContacts/{customerID}")]
+        public IQueryable<CustomerContact> GetCustomerContacts(long customerID)
         {
-            return db.CustomerContacts;
+            db.Configuration.ProxyCreationEnabled = false;
+            return db.CustomerContacts.Where(x => x.CustomerID == customerID);
         }
 
         // GET: api/CustomerContacts/5
         [ResponseType(typeof(CustomerContact))]
+        [Route("api/CustomerContacts/GetCustomerContact/{id}")]
         public IHttpActionResult GetCustomerContact(long id)
         {
             CustomerContact customerContact = db.CustomerContacts.Find(id);
@@ -36,7 +41,8 @@ namespace ClientContactManager.Controllers
         }
 
         // PUT: api/CustomerContacts/5
-        [ResponseType(typeof(void))]
+        [System.Web.Http.HttpPut]
+        [Route("api/CustomerContacts/UpdateCustomerContact/{id}/{name}/{email}/{contactnum}/{customerID}")]
         public IHttpActionResult UpdateCustomerContact(long id, string name, string email,string contactnum, long customerID)
         {
             if (!ModelState.IsValid)
@@ -72,15 +78,15 @@ namespace ClientContactManager.Controllers
         }
 
         // POST: api/CustomerContacts
-        [ResponseType(typeof(CustomerContact))]
-        public IHttpActionResult AddCustomerContact(long id, string name, string email, string contactnum, long customerID)
+        [System.Web.Http.HttpPut]
+        [Route("api/CustomerContacts/AddCustomerContact/{name}/{email}/{contactnum}/{customerID}")]
+        public string AddCustomerContact(string name, string email, string contactnum, long customerID)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return "failed";
             }
             CustomerContact custcontact = new CustomerContact();
-            custcontact.ID = id;
             custcontact.Name = name;
             custcontact.Email = email;
             custcontact.ContactNumber = contactnum;
@@ -88,7 +94,7 @@ namespace ClientContactManager.Controllers
             db.CustomerContacts.Add(custcontact);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = custcontact.ID }, custcontact);
+            return "successfull"; //CreatedAtRoute("DefaultApi", new { id = custcontact.ID }, custcontact);
         }
 
         // DELETE: api/CustomerContacts/5

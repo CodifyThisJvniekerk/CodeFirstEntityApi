@@ -7,13 +7,13 @@ namespace ClientContactManager.Models
     using System.Data.Entity.Spatial;
 
     [Table("Customer")]
-    public class Customer
+    public partial class Customer
     {
-        List<CustomerContact> CustomerList;
-        public Customer()
-        {
-            CustomerList = new List<CustomerContact>();
-        }
+        //List<Customer> CustomerList;
+        //public Customer()
+        //{
+        //    CustomerList = new List<Customer>();
+        //}
         public long ID { get; set; }
 
         [Required]

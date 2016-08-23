@@ -22,6 +22,7 @@ namespace ClientContactManager.Controllers
         [Route("api/customers/GetCustomers")]
         public IQueryable<Customer> GetCustomers()
         {
+            db.Configuration.ProxyCreationEnabled = false;
             return db.Customers;
         }
         // GET: api/Customers/SearchForCustomerByName?Name=value6
@@ -34,10 +35,10 @@ namespace ClientContactManager.Controllers
         }
         // GET: api/Customers/GetCustomerByID?ID=value
         [ResponseType(typeof(Customer))]
-        [ActionName("GetCustomerByID")]
-        [Route("GetCustomerByID/{id}")]
+        [Route("api/customers/GetCustomerByID/{id}")]
         public IHttpActionResult GetCustomerByID(long id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             Customer customer = db.Customers.Find(id);
             if (customer == null)
             {
