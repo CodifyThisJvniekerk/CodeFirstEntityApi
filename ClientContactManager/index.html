@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title id="titHeader"> Customer Manager </title>
+    <title id="titleHeader"> Customer Manager </title>
 	<meta charset="utf-8" />
     
     <script src="scripts/jquery-3.1.0.min.js"></script>
@@ -10,348 +10,23 @@
     <script src="scripts/jquery-ui.min.js"></script>
     <link href="styles/jquery-ui.min.css" rel="stylesheet" />
     <link href="styles/jquery-ui.theme.min.css" rel="stylesheet" />
+    <script src="scripts/CustomerViews.js"></script>
+    <script src="scripts/CustomerContactViews.js"></script>
     <script>
         var custcontactID = 0;
         var customerID = 0;
-        var url = '/api/customers/GetCustomers';
-        function getCustomers() {
-            url = '/api/customers/GetCustomers';
-            $('#Customers').children().remove();
-            $('#Customers').show();
-            $('#customerform').hide();
-            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td><td></td></tr>').appendTo($('#Customers'));
-            $(function () {
-                $.getJSON(url, function (data) {
-                    console.log(data);
-                    //for (item in data) {
-                    for (var item = 0; item < data.length; ++item) {
-                        var id = data[item].ID;
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'
-                            + "</td><td> <input type='button' onclick='loadCustomer(" + id + ");' value='Edit' class='btn-link'/>"
-                            + "<input type='button' onclick='loadCustomerContactForm("+ id + ");' value='Manage Contacts' class='btn-link' />" +
-                            " <input type='button' onclick='showDeleteCustomerMesage(" + id + ");' value='Delete' class='btn-link' />"
-                            + "</td></tr>").appendTo($('#Customers'))
-                    }
-                });
-            });
-        }
-        function getCustomerByName() {
-            url = '/SearchForCustomerByName/'
-            $('#Customers').show();
-            $('#Customers').children().remove();
-            $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td><td></td></tr>').appendTo($('#Customers'));
-            $(function () {
-                $.getJSON(url + '/'+ $('#txtCustSearck').val(), function (data) {
-                    console.log(data);
-                    //for (item in data) {
-                    for (var item = 0; item < data.length; ++item) {
-                        var id = data[item].ID;
-                        $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'
-                            + "</td><td> <input type='button' onclick='loadCustomer(" + id + ");' value='Edit' class='btn-link'/>" +
-                            + "<input type='button' onclick='loadCustomerContactForm(" + id + ");' value='Manage Contacts' />" +
-                            + "<input type='button' onclick='showDeleteCustomerMesage(" + id + ");' value='Delete' class='btn-link' />" +
-                            + "</td></tr>").appendTo($('#Customers'));
-                            //
-                            
-                    }
-                });
-            });
-        }
-        function showCustomerForm(id) {
-            if (id > 0) {
-
-            } else {
-                $('#customerform').show();
-                $('#Customers').hide();
-                $('#txtCustomerID').val("");
-            }
-        }
-        function addEditCustomer() {
-            if ($('#txtCustomerID').val() == "")
-            {
-                if ($('#txtCustName').val().trim() !== "") {
-                    if ($.isNumeric($('#txtCustLatitude').val()) && $.isNumeric($('#txtCustLongitude').val())) {
-                        $.ajax({
-                            type: "PUT",
-                            url: "AddCustomer/" + $('#txtCustName').val() + '/' + $('#txtCustLatitude').val() + '/' + $('#txtCustLongitude').val(),
-                            //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            },
-                            success: function (result) {
-                                alert('customer saved.');
-                            }
-                            });
-                    } else {
-                        alert('Please ensure both the longitude and latitude is numerical.');
-                    }
-                } else {
-                    alert('Please enter an customer name.');
-                }
-            } else {
-                if ($('#txtCustName').val().trim() !== "") {
-                    if ($.isNumeric($('#txtCustLatitude').val()) && $.isNumeric($('#txtCustLongitude').val())) {
-                        $.ajax({
-                            type: "PUT",
-                            url: "UpdateCustomer/" + $('#txtCustomerID').val() + '/' + $('#txtCustName').val() + '/' + $('#txtCustLatitude').val() + '/' + $('#txtCustLongitude').val(),
-                            //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            },
-                            success: function (result) {
-                                alert('customer saved.');
-                            }
-                        });
-                    } else {
-                        alert('Please ensure both the longitude and latitude is numerical.');
-                    }
-                } else {
-                    alert('Please enter an customer name.');
-                }
-            }
-            $('#Customers').hide();
-            $('#customerform').hide();
-            
-        }
-        function loadCustomer(id) {
-            url = '/api/customers/GetCustomerByID/' + id
-            $(function () {
-                $.getJSON(url, function (data) {
-                    console.log(data);
-                    console.log(data.ID + ' ' + data.Name + ' ' + data.Latitude + ' ' + data.Longitude);
-                    $('#customerform').show();
-                    $('#Customers').hide();
-                    $('#txtCustName').val(data.Name);
-                    $('#txtCustLatitude').val(data.Latitude);
-                    $('#txtCustLongitude').val(data.Longitude);
-                    $('#txtCustomerID').val(id);
-                });
-            });
-        }
-        var deleteCustomer = 0;
-        function showDeleteCustomerMesage(contactid) {
-            $(function () {
-                $("#dailogDeleteCustomer").dialog();
-            });
-            deleteCustomer = contactid;
-        }
-        function deleteCustomerNo() {
-            $(function () {
-                $("#dailogDeleteCustomer").dialog("close");
-            });
-            deleteCustomer = 0;
-        }
-        function deleteCustomerYes() {
-            $(function () {
-                $("#dailogDeleteCustomer").dialog("close");
-            });
-            $.ajax({
-                type: "PUT",
-                url: "api/customers/DeleteCustomer/" + deleteCustomer,
-                //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert(errorThrown);
-                },
-                success: function (result) {
-                    alert('customer deleted.');
-                    getCustomers();
-                }
-            });
-            
-        }
-
-        //Customer Contact Section Start
-        function loadCustomerContactForm(custid) {
-            
-            customerID = custid;
-            url = '/api/customers/GetCustomerByID/' + custid;
-            $('#divCustomerForm').hide();
-            $('#divCustomerContactsForm').show();
-            $(function () {
-                $.getJSON(url, function (data) {
-                    console.log(data);
-                    success: $('#customercontactsHeader').text(data.Name + "'s Contacts");
-                })
-            });
-            setTimeout(function () { getCustomerContacts(custid) }, 500);
-            
-        }
-        function getCustomerContacts(custid) {
-            $('#tblcustomercontactform').hide();
-            $('#CustomerContacts').show();
-            $('#CustomerContacts').children().remove();
-            $('<tr><td>Name</td><td>Contact Number</td><td>Email</td><td></td></tr>').appendTo($('#CustomerContacts'));
-            url = '/api/CustomerContacts/GetCustomerContacts/' + custid
-            $(function () {
-                $.getJSON(url, function (data) {
-                    console.log(data);
-                    for (var x = 0; x < data.length; ++x) {
-                        $('<tr><td>' + data[x].Name + '</td><td>' + data[x].ContactNumber + '<td>' + data[x].Email + '</td>' +
-                            "</td><td> <input type='button' onclick='showCustomerContactForm(" + customerID + "," + data[x].ID + ");' value='edit' class='btn-link'/>"
-                            + "<input type='button' onclick='showContactDeleteMesage(" + data[x].ID + ");' value='delete' class='btn-link'/>" + + '</td></tr>').appendTo($('#CustomerContacts'))
-                    }
-                });
-            });
-        }
-        function showCustomerContactForm(custid, customercontactID) {
-            if (customercontactID > 0) {
-                custcontactID = customercontactID;
-                //Update/Edit load customer contact information
-                url = '/api/CustomerContacts/GetCustomerContact/' + customercontactID;
-                $(function () {
-                    $.getJSON(url, function (data) {
-                        console.log(data);
-                        success: {
-                            $('#txtCustContactName').val(data.Name);
-                            $('#txtCustContactnum').val(data.ContactNumber);
-                            $('#txtCustContactEmail').val(data.Email);
-                        }
-                    })
-                });
-                setTimeout(function () { $('#contactMode').val("edit"); custcontactID = customercontactID; }, 500);
-                
-            } else {
-                //Add/Insert show customer contact form clear text boxes
-                custcontactID = 0;
-                $('#txtCustContactName').val("");
-                $('#txtCustContactnum').val("");
-                $('#txtCustContactEmail').val("");
-                setTimeout(function () { $('#contactMode').val("add"); custcontactID = 0; }, 500);
-            }
-            $('#tblcustomercontactform').show();
-            $('#CustomerContacts').hide();
-        }
-        function addEditCustomerContacts(custid, customercontactID) {
-            var isvalid = false
-            custcontactID = customercontactID;
-            if ($('#txtCustContactName').val().trim() !== "") {
-                if ($('#txtCustContactEmail').val().trim() !== "") {
-                    if ($('#txtCustContactnum').val().trim() !== "") {
-                        isvalid = true;
-                    } else {
-                        alert('Please enter an valid contact number.');
-                    }
-                } else {
-                    alert('Please enter an valid email address.');
-                }
-            } else {
-                alert('Please enter an customer name.');
-            }
-            if (isvalid === true) {
-                if (custcontactID > 0 && $('#contactMode').val() === 'edit') {
-                   
-                    //Update/Edit
-                    //alert('edit');
-                    updateCustomerContact(custcontactID, $('#txtCustContactName').val(), $('#txtCustContactEmail').val(), $('#txtCustContactnum').val(), custid);
-                } else {
-                    
-                    //Add/Insert
-                    //alert('add');
-                    addCustomerContact($('#txtCustContactName').val(), $('#txtCustContactEmail').val(), $('#txtCustContactnum').val(), custid);
-                }
-            }
-            
-        }
-        function addCustomerContact(name, email, contactnum, customerID){
-            $.ajax({
-                type: "PUT",
-                url: "/api/CustomerContacts/AddCustomerContact/" + name + "/" + email + "/" + contactnum + "/" + customerID,
-                //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert(errorThrown);
-                },
-                success: function (result) {
-                    alert('customer contact saved.');
-                    getCustomerContacts(customerID);
-                }
-            });
-        }
-        function updateCustomerContact(id, name, email, contactnum, customerID) {
-
-            $.ajax({
-                type: "PUT",
-                url: "/api/CustomerContacts/UpdateCustomerContact/" + id + "/" + name + "/" + email + "/" + contactnum + "/" + customerID,
-                //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert(errorThrown);
-                },
-                success: function (result) {
-                    alert('customer contact saved.');
-                    getCustomerContacts(customerID);
-                }
-            });
-        }
-        function getCustomerContactByName(customerID) {
-            if( $('#txtCustContactSearch').val().trim() !== "" ){
-                $('#tblcustomercontactform').hide();
-                $('#CustomerContacts').show();
-                $('#CustomerContacts').children().remove();
-                $('<tr><td>Name</td><td>Contact Number</td><td>Email</td><td></td></tr>').appendTo($('#CustomerContacts'));
-                url = '/api/CustomerContacts/GetCustomerContactsByName/' + customerID + '/' + $('#txtCustContactSearch').val().trim();
-                $(function () {
-                    $.getJSON(url, function (data) {
-                        console.log(data);
-                        for (var x = 0; x < data.length; ++x) {
-                            $('<tr><td>' + data[x].Name + '</td><td>' + data[x].ContactNumber + '<td>' + data[x].Email + '</td>' +
-                                "</td><td> <input type='button' onclick='showCustomerContactForm(" + customerID + "," + data[x].ID + ");' value='edit' class='btn-link'/>" +
-                                "<input type='button' onclick='showContactDeleteMesage(" + data[x].ID + ");' value='delete' class='btn-link'/>" + '</td></tr>').appendTo($('#CustomerContacts'))
-                        }
-                    });
-                });
-            }
-        }
         var deletecontactID = 0;
-        function showContactDeleteMesage(contactid) {
-            $(function () {
-                $("#dailogDeleteContact").dialog();
-            });
-            deletecontactID = contactid;
-        }
-        function deleteContactNo() {
-            $(function () {
-                $("#dailogDeleteContact").dialog("close");
-            });
-            deletecontactID = 0;
-        }
-        function deleteContactYes() {
-            $(function () {
-                $("#dailogDeleteContact").dialog("close");
-            });
-            $.ajax({
-                type: "PUT",
-                url: "/api/CustomerContacts/DeleteCustomerContact/" + deletecontactID,
-                //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert(errorThrown);
-                },
-                success: function (result) {
-                    alert('customer contact deleted.');
-                    getCustomerContacts(customerID);
-                }
-            });
-        }
-        //Customer Contact Section END
-
+        var deleteCustomer = 0;
+        var url = '/api/customers/GetCustomers';
         //Navigation
         function backToCustomers() {
             $('#divCustomerContactsForm').hide();
             $('#divCustomerForm').show();
             getCustomers();
         }
-        
     </script>
 </head>
-<body onload="getCustomers();">
+<body onload="getCustomers();" style="background-color:lightgray;">
     <div id="dailogDeleteContact" style="display:none;" title="Warning">
         <p>Are you sure want to delete the contact? </p>
         <div style="width:100%"><input type="button" class="btn-danger" value="Yes" style="text-align:left;" onclick="deleteContactYes()"/> <input type="button" class="btn-info" value="no" style="text-align:right;" onclick="    deleteContactNo();"/></div>
@@ -360,9 +35,11 @@
         <p>Are you sure want to delete the customer all contacts of this customer will also be deleted? </p>
         <div style="width:100%"><input type="button" class="btn-danger" value="Yes" style="text-align:left;" onclick="deleteCustomerYes()" /> <input type="button" class="btn-info" value="no" style="text-align:right;" onclick="    deleteCustomerNo();" /></div>
     </div>
-    <div style="width:100%; height:100%; background-color:"></div>
-    <div id="divCustomerForm">
-        <h1 class="page-header"> Customers </h1> <div style="display:inline; width:100%;">
+    <div style="width:100%; height:20%; font-family:Arial; font-size:large; vertical-align:middle; text-align:center; background-color:mediumblue; color:white;">
+        Customer Contact Manager
+    </div>
+    <div id="divCustomerForm" style="padding:5px; margin:5px;">
+        <h5> Customers </h5> <div style="display:inline; width:100%;">
             <input type="search" class="text-primary" id="txtCustSearck" />
             <input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerByName();" />
             <input type="button" value="Add Customer" class="btn-info" onclick="showCustomerForm(0);" />
@@ -373,58 +50,61 @@
                 <td></td>
             </tr>
         </table>
-        <table id="customerform" style="display:none; width:50%" class="">
-            <tr>
-                <td>Name:</td>
-                <td><input type="text" id="txtCustName" /><input type="text" id="txtCustomerID" style="display:none;"></td>
-            </tr>
-            <tr>
-                <td>Latitude</td>
-                <td><input type="text" id="txtCustLatitude" /></td>
-            </tr>
-            <tr>
-                <td>Longitude</td>
-                <td><input type="text" id="txtCustLongitude" /></td>
-            </tr>
-            <tr>
-                <td><input type="button" class="btn-info" value="Save" onclick="addEditCustomer();" /></td>
-                <td></td>
-            </tr>
-        </table>
+        <div style="padding:5px;">
+            <table id="customerform" style="display:none; width:100%;">
+                <tr>
+                    <td style="width:30%">Name:</td>
+                    <td style="width:70%"><input type="text" id="txtCustName" style="width:99%" /><input type="text" id="txtCustomerID" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Latitude</td>
+                    <td><input type="text" id="txtCustLatitude" style="width:99%" /></td>
+                </tr>
+                <tr>
+                    <td>Longitude</td>
+                    <td><input type="text" id="txtCustLongitude" style="width:99%" /></td>
+                </tr>
+                <tr>
+                    <td><input type="button" class="btn-info" value="Save" onclick="addEditCustomer();" /></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        
     </div>
     <div id="divCustomerContactsForm" style="display:none;">
         <input type="button" id="btnBackToCustomers" class="btn-link" value="Back" onclick="backToCustomers();" />
-        <h1 id="customercontactsHeader" class="page-header"> Contacts </h1> <div style="display:inline; width:100%">
-            <input type="search" class="text-primary" id="txtCustContactSearch" />
-            <input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerContactByName(customerID);" />
-            <input type="button" value="Add Contact" class="btn-info" onclick="showCustomerContactForm(customerID, 0);" />
-            <input type="button" value="Show All" class="btn-info" onclick="getCustomerContacts(customerID);" />
+        <div style="padding:5px; margin:5px">
+            <h5 id="customercontactsHeader"> Contacts </h5> <div style="display:inline; width:100%">
+                <input type="search" class="text-primary" id="txtCustContactSearch" />
+                <input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerContactByName(customerID);" />
+                <input type="button" value="Add Contact" class="btn-info" onclick="showCustomerContactForm(customerID, 0);" />
+                <input type="button" value="Show All" class="btn-info" onclick="getCustomerContacts(customerID);" />
+            </div>
+            <table id="CustomerContacts" style="width:100%" class="table-striped">
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+            <table id="tblcustomercontactform" style="display:none; width:100%" class="">
+                <tr>
+                    <td style="width:30%">Name:</td>
+                    <td style="width:70%"><input type="text" id="txtCustContactName" style="width:99%" /><input type="text" id="contactMode" style="display:none;" value="add"></td>
+                </tr>
+                <tr>
+                    <td>Contact Number</td>
+                    <td><input type="tel" id="txtCustContactnum" style="width:99%" /></td>
+                </tr>
+                <tr>
+                    <td>Email </td>
+                    <td><input type="email" id="txtCustContactEmail" style="width:99%" /></td>
+                </tr>
+                <tr>
+                    <td><input type="button" class="btn-info" value="Save Contact" onclick="addEditCustomerContacts(customerID, custcontactID);" /></td>
+                    <td></td>
+                </tr>
+            </table>
         </div>
-        <table id="CustomerContacts" style="width:100%" class="table-striped">
-            <tr>
-                <td></td>
-            </tr>
-        </table>
-        <table id="tblcustomercontactform" style="display:none; width:50%" class="">
-            <tr>
-                <td>Name:</td>
-                <td><input type="text" id="txtCustContactName" /><input type="text" id="contactMode" style="display:none;" value="add"></td>
-            </tr>
-            <tr>
-                <td>Contact Number</td>
-                <td><input type="tel" id="txtCustContactnum" /></td>
-            </tr>
-            <tr>
-                <td>Email </td>
-                <td><input type="email" id="txtCustContactEmail" /></td>
-            </tr>
-            <tr>
-                <td><input type="button" class="btn-info" value="Save Contact" onclick="addEditCustomerContacts(customerID, custcontactID);" /></td>
-                <td></td>
-            </tr>
-        </table>
-
     </div>
-
 </body>
 </html>
