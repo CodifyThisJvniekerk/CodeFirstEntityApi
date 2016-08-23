@@ -104,7 +104,9 @@ namespace ClientContactManager.Controllers
         }
 
         // DELETE: api/Customers/5
+        [System.Web.Http.HttpPut]
         [ResponseType(typeof(Customer))]
+        [Route("api/customers/DeleteCustomer/{id}")]
         public IHttpActionResult DeleteCustomer(long id)
         {
             Customer customer = db.Customers.Find(id);
@@ -112,7 +114,7 @@ namespace ClientContactManager.Controllers
             {
                 return NotFound();
             }
-
+            
             db.Customers.Remove(customer);
             db.SaveChanges();
 

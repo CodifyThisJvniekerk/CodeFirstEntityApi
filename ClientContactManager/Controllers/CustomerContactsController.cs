@@ -16,14 +16,22 @@ namespace ClientContactManager.Controllers
     {
         private CustomerApp db = new CustomerApp();
 
-        // GET: api/CustomerContacts
+        // GET: api/CustomerContacts/GetCustomerContacts/customerid
         [ResponseType(typeof(IQueryable<Customer>))]
-        [ActionName("GetCustomerContacts")]
         [Route("api/CustomerContacts/GetCustomerContacts/{customerID}")]
         public IQueryable<CustomerContact> GetCustomerContacts(long customerID)
         {
             db.Configuration.ProxyCreationEnabled = false;
             return db.CustomerContacts.Where(x => x.CustomerID == customerID);
+        }
+
+        // GET: api/CustomerContacts/GetCustomerContactsByName/{customerID}/{customername}
+        [ResponseType(typeof(IQueryable<Customer>))]
+        [Route("api/CustomerContacts/GetCustomerContactsByName/{customerID}/{customername}")]
+        public IQueryable<CustomerContact> GetCustomerContacts(long customerID, string customername)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            return db.CustomerContacts.Where(x => x.CustomerID == customerID).Where(name => name.Name.Contains(customername));
         }
 
         // GET: api/CustomerContacts/5
@@ -98,8 +106,10 @@ namespace ClientContactManager.Controllers
             return "successfull"; //CreatedAtRoute("DefaultApi", new { id = custcontact.ID }, custcontact);
         }
 
-        // DELETE: api/CustomerContacts/5
+        // DELETE: api/CustomerContacts/DeleteCustomerContact/{id}
+        [HttpPut]
         [ResponseType(typeof(CustomerContact))]
+        [Route("api/CustomerContacts/DeleteCustomerContact/{id}")]
         public IHttpActionResult DeleteCustomerContact(long id)
         {
             CustomerContact customerContact = db.CustomerContacts.Find(id);
