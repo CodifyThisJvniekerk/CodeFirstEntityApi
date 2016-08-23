@@ -31,6 +31,7 @@ namespace ClientContactManager.Controllers
         [Route("api/CustomerContacts/GetCustomerContact/{id}")]
         public IHttpActionResult GetCustomerContact(long id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             CustomerContact customerContact = db.CustomerContacts.Find(id);
             if (customerContact == null)
             {

@@ -132,7 +132,8 @@
             
         }
         function getCustomerContacts(custid) {
-            console
+            $('#tblcustomercontactform').hide();
+            $('#CustomerContacts').show();
             $('#CustomerContacts').children().remove();
             $('<tr><td>Name</td><td>Contact Number</td><td>Email</td><td></td></tr>').appendTo($('#CustomerContacts'));
             url = '/api/CustomerContacts/GetCustomerContacts/' + custid
@@ -140,27 +141,35 @@
                 $.getJSON(url, function (data) {
                     console.log(data);
                     for (var x = 0; x < data.length; ++x) {
-                        $('<tr><td>' + data[x].Name + '</td><td>' + data[x].ContactNumber + '<td>' + data[x].Email + '</td>' + "</td><td> <input type='button' onclick='loadCustomerContactForm(" + data[x].ID + ");' value='edit'/>" + + '</td></tr>').appendTo($('#CustomerContacts'))
+                        $('<tr><td>' + data[x].Name + '</td><td>' + data[x].ContactNumber + '<td>' + data[x].Email + '</td>' + "</td><td> <input type='button' onclick='showCustomerContactForm(" + customerID + "," + data[x].ID + ");' value='edit'/>" + + '</td></tr>').appendTo($('#CustomerContacts'))
                     }
                 });
             });
         }
         function showCustomerContactForm(custid,customercontactID) {
             if (customercontactID > 0) {
+                custcontactID = customercontactID;
                 //Update/Edit load customer contact information
                 url = '/api/CustomerContacts/GetCustomerContact/' + customercontactID;
                 $(function () {
                     $.getJSON(url, function (data) {
                         console.log(data);
-                        success: $('#customercontactsHeader').text(data.Name + "'s Contacts");
+                        success: {
+                            $('#txtCustContactName').val(data.Name);
+                            console.log(data.Name);
+                            $('#txtCustContactnum').val(data.ContactNumber);
+                            console.log(data.ContactNumber);
+                            $('#txtCustContactEmail').val(data.Email);
+                            console.log(data.Email);
+                        }
                     })
                 });
             } else {
                 //Add/Insert show customer contact form clear text boxes
                 customercontactID = 0;
-                $('#txtCustContactName').text("");
-                $('#txtCustContactnum').text("");
-                $('#txtCustContactEmail').text("");
+                $('#txtCustContactName').val("");
+                $('#txtCustContactnum').val("");
+                $('#txtCustContactEmail').val("");
             }
             $('#tblcustomercontactform').show();
             $('#CustomerContacts').hide();
@@ -181,10 +190,10 @@
                 alert('Please enter an customer name.');
             }
             if (isvalid === true) {
-                if (customercontactID > 0) {
+                if (custcontactID > 0) {
                     //Update/Edit
                     //alert('edit');
-
+                    updateCustomerContact(custcontactID, $('#txtCustContactName').val(), $('#txtCustContactEmail').val(), $('#txtCustContactnum').val(), custid);
                 } else {
                     //Add/Insert
                     //alert('add');
@@ -205,10 +214,27 @@
                 },
                 success: function (result) {
                     alert('customer contact saved.');
+                    getCustomerContacts(customerID);
                 }
             });
         }
+        function updateCustomerContact(id, name, email, contactnum, customerID) {
 
+            $.ajax({
+                type: "PUT",
+                url: "/api/CustomerContacts/UpdateCustomerContact/" + id + "/" + name + "/" + email + "/" + contactnum + "/" + customerID,
+                //data: JSON.stringify({ Nane: $('#txtCustName').val(), latitude: $('#txtCustLatitude').val(), Longitude:  $('#txtCustLongitude').val()}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(errorThrown);
+                },
+                success: function (result) {
+                    alert('customer contact saved.');
+                    getCustomerContacts(customerID);
+                }
+            });
+        }
         //Customer Contact Section END
     </script>
 </head>
@@ -249,7 +275,7 @@
         <h1 id="customercontactsHeader" class="page-header"> Contacts </h1> <div style="display:inline; width:100%">
             <input type="search" class="text-primary" id="txtCustSearck" />
             <input type="button" id="btnSearch" class="btn-info" value="Search" onclick="getCustomerContactByName(customerID);" />
-            <input type="button" value="Add Contact" class="btn-info" onclick="showCustomerContactForm(0, customerID);" />
+            <input type="button" value="Add Contact" class="btn-info" onclick="showCustomerContactForm(customerID, 0);" />
             <input type="button" value="Show All" class="btn-info" onclick="getCustomerContacts(customerID);" />
         </div>
         <table id="CustomerContacts" style="width:100%" class="table-striped">
@@ -260,7 +286,7 @@
         <table id="tblcustomercontactform" style="display:none; width:50%" class="">
             <tr>
                 <td>Name:</td>
-                <td><input type="text" id="txtCustContactName" /><input type="text" id="txtID" style="visibility:hidden;"></td>
+                <td><input type="text" id="txtCustContactName" /></td>
             </tr>
             <tr>
                 <td>Contact Number</td>
