@@ -11,9 +11,10 @@
             for (var item = 0; item < data.length; ++item) {
                 var id = data[item].ID;
                 $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'
-                    + "</td><td> <input type='button' onclick='loadCustomer(" + id + ");' value='Edit' class='btn-link'/>"
-                    + "<input type='button' onclick='loadCustomerContactForm(" + id + ");' value='Manage Contacts' class='btn-link' />" +
-                    " <input type='button' onclick='showDeleteCustomerMesage(" + id + ");' value='Delete' class='btn-link' />"
+                    + "</td><td>"
+                    + " <input type='button' onclick=" + "'loadCustomer(" + id.toString() + ");'" + " value='Edit' class='btn-link'/>"
+                    + " <input type='button' onclick=" + "'loadCustomerContactForm(" + id.toString() + ");'" + " value='Manage Contacts' class='btn-link' />"
+                    + " <input type='button' onclick=" + "'showDeleteCustomerMesage(" + id.toString() + ");'" + " value='Delete' class='btn-link' />"
                     + "</td></tr>").appendTo($('#Customers'))
             }
         });
@@ -26,14 +27,17 @@ function getCustomerByName() {
     $('<tr><td>Name</td><td>Latitude</td><td>Longitude</td><td></td></tr>').appendTo($('#Customers'));
     $(function () {
         $.getJSON(url + '/' + $('#txtCustSearck').val(), function (data) {
-            console.log(data);
+            //console.log(data);
+            var id;
             //for (item in data) {
             for (var item = 0; item < data.length; ++item) {
-                var id = data[item].ID;
+                id = data[item].ID;
+                console.log(data[item].ID);
                 $('<tr><td>' + data[item].Name + '</td><td>' + data[item].Latitude + '<td>' + data[item].Longitude + '</td>'
-                    + "</td><td> <input type='button' onclick='loadCustomer(" + id + ");' value='Edit' class='btn-link'/>" +
-                    + "<input type='button' onclick='loadCustomerContactForm(" + id + ");' value='Manage Contacts' />" +
-                    + "<input type='button' onclick='showDeleteCustomerMesage(" + id + ");' value='Delete' class='btn-link' />" +
+                    + "</td><td>"
+                    + " <input type='button' onclick=" + "'loadCustomer(" + id.toString() + ");'" + " value='Edit' class='btn-link'/>"
+                    + " <input type='button' onclick=" + "'loadCustomerContactForm(" + id.toString() + ");'" + " value='Manage Contacts' class='btn-link' />"
+                    + " <input type='button' onclick=" + "'showDeleteCustomerMesage(" + id.toString() + ");'" + " value='Delete' class='btn-link' />"
                     + "</td></tr>").appendTo($('#Customers'));
                 //
 

@@ -31,6 +31,7 @@ namespace ClientContactManager.Controllers
         [Route("SearchForCustomerByName/{name}")]
         public IQueryable<Customer> SearchForCustomerByName(string Name)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             return db.Customers.Where(x => x.Name.Contains(Name));
         }
         // GET: api/Customers/GetCustomerByID?ID=value
@@ -135,7 +136,7 @@ namespace ClientContactManager.Controllers
             return db.Customers.Count(e => e.ID == id) > 0;
         }
 
-        [ResponseType(typeof(Boolean))]
+        [ResponseType(typeof(bool))]
         [ActionName("CustomerExistsByName")]
         private bool CustomerExistsByName(string Name)
         {

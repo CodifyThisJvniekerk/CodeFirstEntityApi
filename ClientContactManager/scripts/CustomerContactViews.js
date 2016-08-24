@@ -58,15 +58,23 @@ function showCustomerContactForm(custid, customercontactID) {
     $('#tblcustomercontactform').show();
     $('#CustomerContacts').hide();
 }
+function isEmail(email) {
+    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    return regex.test(email);
+}
+function isValidContactNumber(contact) {
+    var regex = /^(\d{3}-\d{3}-\d{4})+$/;
+    return regex.test(contact);
+}
 function addEditCustomerContacts(custid, customercontactID) {
     var isvalid = false
     custcontactID = customercontactID;
     if ($('#txtCustContactName').val().trim() !== "") {
-        if ($('#txtCustContactEmail').val().trim() !== "") {
-            if ($('#txtCustContactnum').val().trim() !== "") {
+        if (isEmail($('#txtCustContactEmail').val())) {
+            if (isValidContactNumber($('#txtCustContactnum').val())) {
                 isvalid = true;
             } else {
-                alert('Please enter an valid contact number.');
+                alert('Please enter an valid contact number. The following format is required ###-###-####');
             }
         } else {
             alert('Please enter an valid email address.');
